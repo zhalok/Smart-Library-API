@@ -1,8 +1,8 @@
 const lcs = require("node-lcs");
 const book_model = require("../models/book-model");
 const search_history_model = require("../models/search-history-model");
-const read_history_schema = require("../models/read-history-model");
-const bookModel = require("../models/book-model");
+const read_history_model = require("../models/read-history-model");
+
 const book_controller = {};
 book_controller.create = async (req, res, next) => {
   try {
@@ -35,7 +35,7 @@ book_controller.read_by_id = async (req, res, next) => {
     const { id } = req.params;
     const { user_email } = req.body;
     let books = await book_model.find({ _id: id });
-    const new_read_history = new read_history_schema({
+    const new_read_history = new read_history_model({
       book_id: id,
       user_email,
       time: new Date(),
@@ -114,6 +114,40 @@ book_controller.delete = async (req, res, next) => {
     const { id } = req.params;
     await book_model.findByIdAndDelete({ _id: id });
     res.status(200).json({ message: "Deleted" });
+  } catch (e) {
+    next(e);
+  }
+};
+book_controller.view_recent = async (req, res, next) => {
+  try {
+    const { user_email } = req.body;
+    let recent_reads = await read_history_model.find({ user_email }).limit(3);
+    recent_reads = recent_reads.map((e) => {
+      return e.book_id;
+    });
+    console.log(recent_reads);
+    let books = await book_model.find({
+      _id: recent_reads,
+    });
+
+    res.json(books);
+  } catch (e) {
+    next(e);
+  }
+};
+book_controller.search_history = async (req, res, next) => {
+  try {
+    const { user_email } = req.body;
+    let recent_reads = await search_history_model.find({ user_email }).limit(3);
+    recent_reads = recent_reads.map((e) => {
+      return e.book_id;
+    });
+
+    let books = await book_model.find({
+      _id: recent_reads,
+    });
+
+    res.json(books);
   } catch (e) {
     next(e);
   }

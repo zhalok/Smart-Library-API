@@ -3,7 +3,7 @@ const bcrypt = require("bcrypt");
 const user_model = require("../models/user-model");
 const otp_model = require("../models/otp-model");
 const otp_generator = require("../utils/otp_generator");
-const sendMail = require("../utils/send_email");
+const admin_model = require("../models/admin-model");
 const { token_generator, token_verification } = require("../utils/token");
 const { default: axios } = require("axios");
 
@@ -39,6 +39,27 @@ user_controller.create = async (req, res, next) => {
           to: email,
           subject: "Email Verification",
           message: `http://localhost:5000/api/user/verify?otp=${otp.otp}`,
+        },
+        {
+          headers: {
+            apikey: process.env.EMAIL_API_KEY,
+          },
+        }
+      )
+      .then(function (response) {
+        console.log(response);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+    const admins = await admin_model.find({});
+    axios
+      .post(
+        "https://smartlibmailer.herokuapp.com/send",
+        {
+          to: admins[0].email,
+          subject: "New User Registraion",
+          message: `A new user named ${name} registered just now`,
         },
         {
           headers: {

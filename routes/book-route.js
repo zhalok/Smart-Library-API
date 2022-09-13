@@ -10,5 +10,15 @@ route.patch("/update", admin_controller.authorize, book_controller.update);
 route.delete("/delete/:id", admin_controller.authorize, book_controller.delete);
 route.post("/search", user_controller.authorize, book_controller.search);
 route.post("/filter", user_controller.authorize, book_controller.filter);
+route.get(
+  "/read-history",
+  user_controller.authorize,
+  book_controller.view_recent
+);
+route.get(
+  "/search-history",
+  user_controller.authorize,
+  book_controller.view_recent
+);
 
 module.exports = route;
