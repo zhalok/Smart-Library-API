@@ -1,33 +1,35 @@
-const nodemailer = require("nodemailer");
-async function sendMail(to, subject, message) {
-  // console.log(to, subject, message);
+const mailgun = require("mailgun-js");
+
+const send_email = async (to, subject, text) => {
+  // console.log(message);
   try {
-    console.log(process.env.EMAIL_USER, process.env.EMAIL_PASS);
-    let transport = nodemailer.createTransport({
-      host: "smtp.gmail.com",
-      port: 465,
-      secure: true,
-      auth: {
-        user: process.env.EMAIL_USER || "rahmanzhalok@gmail.com",
-        pass: process.env.EMAIL_PASS || "cvklpldvwuvspohb",
-      },
+    const mg = mailgun({
+      apiKey:
+        // process.env.MAILGUN_API_KEY ||
+        "c4406e7d1781e0858c690f082e102854-680bcd74-f875c2bb",
+      domain:
+        // process.env.MAILGUN_DOMAIN ||
+        "rahmanzhalok@gmail.com",
     });
 
-    const mailOptions = {
+    const data = {
       from: "rahmanzhalok@gmail.com",
+
       to: to,
+
       subject: subject,
-      text: `${message}`,
-      html: `<p>${message}</p>`,
+
+      text,
     };
-
-    const result = await transport.sendMail(mailOptions);
-    return result;
-  } catch (error) {
-    console.log(error);
-    // return error;
+    // const message = await mg.messages().send(data);
+    // console.log(message);
+    mg.messages().send(data, function (error, body) {
+      if (error) console.log(error);
+      else console.log(body);
+    });
+  } catch (e) {
+    console.log(e);
   }
-}
-
-// sendMail("zhalokrahman007@gmail.com", "Email verification", "Hello bhaia ");
-module.exports = sendMail;
+};
+// send_email("zhalokrahman007@gmail.com", "hello", "testing mailgun");
+module.exports = send_email;

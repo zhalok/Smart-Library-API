@@ -80,13 +80,15 @@ book_controller.search = async (req, res, next) => {
 };
 book_controller.filter = async (req, res, next) => {
   try {
-    const { author, genre, publication, edition } = req.body;
+    const { name, author, genre, publication, edition } = req.body;
     let books = await book_model.find({});
 
+    if (name) books = books.filter((e) => e.name == name);
     if (author) books = books.filter((e) => e.author == author);
     if (genre) books = books.filter((e) => e.genre == genre);
     if (publication) books = books.filter((e) => e.publication == publication);
     if (edition) books = books.filter((e) => e.edition == edition);
+
     res.status(200).json(books);
   } catch (e) {
     next(e);

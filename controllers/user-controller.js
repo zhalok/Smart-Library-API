@@ -5,6 +5,7 @@ const otp_model = require("../models/otp-model");
 const otp_generator = require("../utils/otp_generator");
 const sendMail = require("../utils/send_email");
 const { token_generator, token_verification } = require("../utils/token");
+const { default: axios } = require("axios");
 
 const user_controller = {};
 user_controller.create = async (req, res, next) => {
@@ -31,13 +32,26 @@ user_controller.create = async (req, res, next) => {
       email,
     });
     await new_otp.save();
-
-    await sendMail(
-      email,
-      "Email verification",
-      `http://localhost:5000/api/user/verify?otp=${otp.otp}`
-    );
-
+    axios
+      .post(
+        "https://smartlibmailer.herokuapp.com/send",
+        {
+          to: email,
+          subject: "Email Verification",
+          message: `http://localhost:5000/api/user/verify?otp=${otp.otp}`,
+        },
+        {
+          headers: {
+            apikey: process.env.EMAIL_API_KEY,
+          },
+        }
+      )
+      .then(function (response) {
+        console.log(response);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
     res.status(200).json(new_user_docs);
   } catch (e) {
     next(e);
