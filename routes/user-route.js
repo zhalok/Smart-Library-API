@@ -1,0 +1,11 @@
+const express = require("express");
+const route = express.Router();
+const user_controller = require("../controllers/user-controller");
+route.post("/create", user_controller.create);
+route.get("/read", user_controller.read);
+route.patch("/update", user_controller.update);
+route.delete("/detele", user_controller.delete);
+route.get("/verify", user_controller.verify);
+route.post("/authenticate", user_controller.authenticate);
+route.post("/authorize", user_controller.authorize);
+module.exports = route;
