@@ -52,6 +52,9 @@ book_controller.search = async (req, res, next) => {
     name = name.trim();
     const books = await book_model.find({});
     let matched_books = [];
+    // it may happen that the user is doing mistakes while searching for a book.
+    // therefore we are collecting books which have a larger value of common subsequence with the searched name
+    // then we sorted them on their lengths and returned as response.
     for (let i = 0; i < books.length; i++) {
       const book_name = books[i].name;
       const lcs_match = lcs(book_name, name);
@@ -82,7 +85,8 @@ book_controller.filter = async (req, res, next) => {
   try {
     const { name, author, genre, publication, edition } = req.body;
     let books = await book_model.find({});
-
+    // ther user may not select all the filtering paramters
+    // thats why we are filtering on the available paramters given by the user
     if (name) books = books.filter((e) => e.name == name);
     if (author) books = books.filter((e) => e.author == author);
     if (genre) books = books.filter((e) => e.genre == genre);
