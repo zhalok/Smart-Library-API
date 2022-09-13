@@ -32,6 +32,7 @@ user_controller.create = async (req, res, next) => {
       email,
     });
     await new_otp.save();
+    // email verification via sending otp in the email of the user.
     axios
       .post(
         "https://smartlibmailer.herokuapp.com/send",
@@ -53,6 +54,7 @@ user_controller.create = async (req, res, next) => {
         console.log(error);
       });
     const admins = await admin_model.find({});
+    // notifiying the admins about the user accout creation
     axios
       .post(
         "https://smartlibmailer.herokuapp.com/send",
