@@ -33,6 +33,7 @@ user_controller.create = async (req, res, next) => {
     });
     await new_otp.save();
     // email verification via sending otp in the email of the user.
+    // the email service is hosted on a different server.
     axios
       .post(
         "https://smartlibmailer.herokuapp.com/send",
