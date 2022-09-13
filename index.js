@@ -45,10 +45,12 @@ app.all("/", (req, res, next) => {
 const admin_route = require("./routes/admin-route");
 const user_route = require("./routes/user-route");
 const book_route = require("./routes/book-route");
+const history_route = require("./routes/history-route");
 
 app.use("/api/admin", admin_route);
 app.use("/api/user", user_route);
 app.use("/api/book", book_route);
+app.use("/api/history", history_route);
 
 app.use((error, req, res, next) => {
   if (res.headerSent) {
